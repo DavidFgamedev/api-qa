@@ -1,0 +1,79 @@
+name: api-qa
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  jest:
+    name: jest (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['18', '20', '22']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - name: Contract suite over real HTTP
+        run: npm test
+
+  newman:
+    name: newman (generated collection)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      # The collection is generated from the contract table. If someone edits an endpoint
+      # and forgets to regenerate, this fails before Newman runs a misleading green pass.
+      - name: Collection is in sync with the contract table
+        run: npm run postman:check
+      - name: Run the collection against the fixture service
+        run: npm run newman
+
+  drift:
+    name: the drifted build must fail
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      # A suite that has only ever seen a correct service proves nothing about whether it
+      # would notice an incorrect one. This asserts the failure, so a change that quietly
+      # stops detecting drift turns this job red instead of leaving everything green.
+      - name: jest must exit non-zero against the drifted build
+        run: |
+          if DRIFT=all npx jest --runInBand > /dev/null 2>&1; then
+            echo "::error::the suite passed against the drifted build, so it is no longer detecting drift"
+            exit 1
+          fi
+          echo "ok: jest failed the drifted build"
+      - name: newman must exit non-zero against the drifted build
+        run: |
+          if DRIFT=all node postman/run-newman.js > /dev/null 2>&1; then
+            echo "::error::the collection passed against the drifted build"
+            exit 1
+          fi
+          echo "ok: newman failed the drifted build"
+      - name: each drift is caught by at least one named test
+        run: |
+          for d in renameField wrongStatus missingProperty brokenAuth; do
+            if DRIFT=$d npx jest --runInBand > /dev/null 2>&1; then
+              echo "::error::drift '$d' was not caught by any test"
+              exit 1
+            fi
+            echo "ok: $d is caught"
+          done

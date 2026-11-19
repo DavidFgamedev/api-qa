@@ -1,0 +1,367 @@
+{
+  "info": {
+    "name": "api-qa",
+    "description": "Generated from contracts/index.js. Do not edit by hand: run `npm run postman:generate`. The collection and the Jest suite read the same contract table, so there is one copy of each schema.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "sessionKey",
+      "value": "test-session-key"
+    },
+    {
+      "key": "playerId",
+      "value": ""
+    },
+    {
+      "key": "slug",
+      "value": "health-potion"
+    }
+  ],
+  "item": [
+    {
+      "name": "GET /players :: list players",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status is 200\", function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"body matches its contract\", function () {",
+              "  const schema = {\"type\":\"object\",\"required\":[\"items\",\"page\",\"pageSize\",\"total\"],\"additionalProperties\":false,\"properties\":{\"items\":{\"type\":\"array\",\"items\":{\"$ref\":\"player\"}},\"page\":{\"type\":\"integer\",\"minimum\":1},\"pageSize\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"total\":{\"type\":\"integer\",\"minimum\":0}}};",
+              "  const defs = {\"player\":{\"$id\":\"player\",\"type\":\"object\",\"required\":[\"id\",\"displayName\",\"level\",\"createdAt\"],\"additionalProperties\":false,\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1},\"displayName\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":32},\"level\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":999},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"}}},\"item\":{\"$id\":\"item\",\"type\":\"object\",\"required\":[\"id\",\"playerId\",\"slug\",\"quantity\"],\"additionalProperties\":false,\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1},\"playerId\":{\"type\":\"string\",\"minLength\":1},\"slug\":{\"type\":\"string\",\"pattern\":\"^[a-z0-9-]+$\"},\"quantity\":{\"type\":\"integer\",\"minimum\":0}}},\"error\":{\"$id\":\"error\",\"type\":\"object\",\"required\":[\"error\",\"message\"],\"additionalProperties\":false,\"properties\":{\"error\":{\"type\":\"string\",\"enum\":[\"validation_failed\",\"not_found\",\"unauthorized\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}}};",
+              "  pm.response.to.have.jsonSchema(resolve(schema, defs));",
+              "});",
+              "function resolve(node, defs) {",
+              "  if (Array.isArray(node)) return node.map(function (n) { return resolve(n, defs); });",
+              "  if (node && typeof node === \"object\") {",
+              "    if (typeof node.$ref === \"string\" && defs[node.$ref]) return resolve(defs[node.$ref], defs);",
+              "    const out = {};",
+              "    Object.keys(node).forEach(function (k) { if (k !== \"$id\") out[k] = resolve(node[k], defs); });",
+              "    return out;",
+              "  }",
+              "  return node;",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/players?page=1&pageSize=2",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "players"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "POST /players :: create player",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status is 201\", function () {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "pm.test(\"body matches its contract\", function () {",
+              "  const schema = {\"$id\":\"player\",\"type\":\"object\",\"required\":[\"id\",\"displayName\",\"level\",\"createdAt\"],\"additionalProperties\":false,\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1},\"displayName\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":32},\"level\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":999},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"}}};",
+              "  const defs = {\"player\":{\"$id\":\"player\",\"type\":\"object\",\"required\":[\"id\",\"displayName\",\"level\",\"createdAt\"],\"additionalProperties\":false,\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1},\"displayName\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":32},\"level\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":999},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"}}},\"item\":{\"$id\":\"item\",\"type\":\"object\",\"required\":[\"id\",\"playerId\",\"slug\",\"quantity\"],\"additionalProperties\":false,\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1},\"playerId\":{\"type\":\"string\",\"minLength\":1},\"slug\":{\"type\":\"string\",\"pattern\":\"^[a-z0-9-]+$\"},\"quantity\":{\"type\":\"integer\",\"minimum\":0}}},\"error\":{\"$id\":\"error\",\"type\":\"object\",\"required\":[\"error\",\"message\"],\"additionalProperties\":false,\"properties\":{\"error\":{\"type\":\"string\",\"enum\":[\"validation_failed\",\"not_found\",\"unauthorized\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}}};",
+              "  pm.response.to.have.jsonSchema(resolve(schema, defs));",
+              "});",
+              "function resolve(node, defs) {",
+              "  if (Array.isArray(node)) return node.map(function (n) { return resolve(n, defs); });",
+              "  if (node && typeof node === \"object\") {",
+              "    if (typeof node.$ref === \"string\" && defs[node.$ref]) return resolve(defs[node.$ref], defs);",
+              "    const out = {};",
+              "    Object.keys(node).forEach(function (k) { if (k !== \"$id\") out[k] = resolve(node[k], defs); });",
+              "    return out;",
+              "  }",
+              "  return node;",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"displayName\": \"Ada\",\n  \"level\": 3\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/players",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "players"
+          ]
+        }
+      }
+    },
+    {
+      "name": "POST /players :: create player, invalid body",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status is 422\", function () {",
+              "  pm.response.to.have.status(422);",
+              "});",
+              "pm.test(\"body matches its contract\", function () {",
+              "  const schema = {\"$id\":\"error\",\"type\":\"object\",\"required\":[\"error\",\"message\"],\"additionalProperties\":false,\"properties\":{\"error\":{\"type\":\"string\",\"enum\":[\"validation_failed\",\"not_found\",\"unauthorized\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}};",
+              "  const defs = {\"player\":{\"$id\":\"player\",\"type\":\"object\",\"required\":[\"id\",\"displayName\",\"level\",\"createdAt\"],\"additionalProperties\":false,\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1},\"displayName\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":32},\"level\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":999},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"}}},\"item\":{\"$id\":\"item\",\"type\":\"object\",\"required\":[\"id\",\"playerId\",\"slug\",\"quantity\"],\"additionalProperties\":false,\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1},\"playerId\":{\"type\":\"string\",\"minLength\":1},\"slug\":{\"type\":\"string\",\"pattern\":\"^[a-z0-9-]+$\"},\"quantity\":{\"type\":\"integer\",\"minimum\":0}}},\"error\":{\"$id\":\"error\",\"type\":\"object\",\"required\":[\"error\",\"message\"],\"additionalProperties\":false,\"properties\":{\"error\":{\"type\":\"string\",\"enum\":[\"validation_failed\",\"not_found\",\"unauthorized\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}}};",
+              "  pm.response.to.have.jsonSchema(resolve(schema, defs));",
+              "});",
+              "function resolve(node, defs) {",
+              "  if (Array.isArray(node)) return node.map(function (n) { return resolve(n, defs); });",
+              "  if (node && typeof node === \"object\") {",
+              "    if (typeof node.$ref === \"string\" && defs[node.$ref]) return resolve(defs[node.$ref], defs);",
+              "    const out = {};",
+              "    Object.keys(node).forEach(function (k) { if (k !== \"$id\") out[k] = resolve(node[k], defs); });",
+              "    return out;",
+              "  }",
+              "  return node;",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"displayName\": \"\",\n  \"level\": 0\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/players",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "players"
+          ]
+        }
+      }
+    },
+    {
+      "name": "GET /players/does-not-exist :: read player, absent",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status is 404\", function () {",
+              "  pm.response.to.have.status(404);",
+              "});",
+              "pm.test(\"body matches its contract\", function () {",
+              "  const schema = {\"$id\":\"error\",\"type\":\"object\",\"required\":[\"error\",\"message\"],\"additionalProperties\":false,\"properties\":{\"error\":{\"type\":\"string\",\"enum\":[\"validation_failed\",\"not_found\",\"unauthorized\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}};",
+              "  const defs = {\"player\":{\"$id\":\"player\",\"type\":\"object\",\"required\":[\"id\",\"displayName\",\"level\",\"createdAt\"],\"additionalProperties\":false,\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1},\"displayName\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":32},\"level\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":999},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"}}},\"item\":{\"$id\":\"item\",\"type\":\"object\",\"required\":[\"id\",\"playerId\",\"slug\",\"quantity\"],\"additionalProperties\":false,\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1},\"playerId\":{\"type\":\"string\",\"minLength\":1},\"slug\":{\"type\":\"string\",\"pattern\":\"^[a-z0-9-]+$\"},\"quantity\":{\"type\":\"integer\",\"minimum\":0}}},\"error\":{\"$id\":\"error\",\"type\":\"object\",\"required\":[\"error\",\"message\"],\"additionalProperties\":false,\"properties\":{\"error\":{\"type\":\"string\",\"enum\":[\"validation_failed\",\"not_found\",\"unauthorized\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}}};",
+              "  pm.response.to.have.jsonSchema(resolve(schema, defs));",
+              "});",
+              "function resolve(node, defs) {",
+              "  if (Array.isArray(node)) return node.map(function (n) { return resolve(n, defs); });",
+              "  if (node && typeof node === \"object\") {",
+              "    if (typeof node.$ref === \"string\" && defs[node.$ref]) return resolve(defs[node.$ref], defs);",
+              "    const out = {};",
+              "    Object.keys(node).forEach(function (k) { if (k !== \"$id\") out[k] = resolve(node[k], defs); });",
+              "    return out;",
+              "  }",
+              "  return node;",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/players/does-not-exist",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "players",
+            "does-not-exist"
+          ]
+        }
+      }
+    },
+    {
+      "name": "GET /leaderboard :: leaderboard",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status is 200\", function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"body matches its contract\", function () {",
+              "  const schema = {\"type\":\"object\",\"required\":[\"items\",\"page\",\"pageSize\",\"total\"],\"additionalProperties\":false,\"properties\":{\"items\":{\"type\":\"array\",\"items\":{\"$ref\":\"player\"}},\"page\":{\"type\":\"integer\",\"minimum\":1},\"pageSize\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":100},\"total\":{\"type\":\"integer\",\"minimum\":0}}};",
+              "  const defs = {\"player\":{\"$id\":\"player\",\"type\":\"object\",\"required\":[\"id\",\"displayName\",\"level\",\"createdAt\"],\"additionalProperties\":false,\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1},\"displayName\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":32},\"level\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":999},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"}}},\"item\":{\"$id\":\"item\",\"type\":\"object\",\"required\":[\"id\",\"playerId\",\"slug\",\"quantity\"],\"additionalProperties\":false,\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1},\"playerId\":{\"type\":\"string\",\"minLength\":1},\"slug\":{\"type\":\"string\",\"pattern\":\"^[a-z0-9-]+$\"},\"quantity\":{\"type\":\"integer\",\"minimum\":0}}},\"error\":{\"$id\":\"error\",\"type\":\"object\",\"required\":[\"error\",\"message\"],\"additionalProperties\":false,\"properties\":{\"error\":{\"type\":\"string\",\"enum\":[\"validation_failed\",\"not_found\",\"unauthorized\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}}};",
+              "  pm.response.to.have.jsonSchema(resolve(schema, defs));",
+              "});",
+              "function resolve(node, defs) {",
+              "  if (Array.isArray(node)) return node.map(function (n) { return resolve(n, defs); });",
+              "  if (node && typeof node === \"object\") {",
+              "    if (typeof node.$ref === \"string\" && defs[node.$ref]) return resolve(defs[node.$ref], defs);",
+              "    const out = {};",
+              "    Object.keys(node).forEach(function (k) { if (k !== \"$id\") out[k] = resolve(node[k], defs); });",
+              "    return out;",
+              "  }",
+              "  return node;",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/leaderboard?page=1&pageSize=10",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "leaderboard"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "POST /admin/reset :: admin reset, authenticated",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status is 204\", function () {",
+              "  pm.response.to.have.status(204);",
+              "});",
+              "pm.test(\"body is empty\", function () { pm.expect(pm.response.text()).to.eql(\"\"); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Session-Key",
+            "value": "{{sessionKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/admin/reset",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "admin",
+            "reset"
+          ]
+        }
+      }
+    },
+    {
+      "name": "POST /admin/reset :: admin reset, no session",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status is 401\", function () {",
+              "  pm.response.to.have.status(401);",
+              "});",
+              "pm.test(\"body matches its contract\", function () {",
+              "  const schema = {\"$id\":\"error\",\"type\":\"object\",\"required\":[\"error\",\"message\"],\"additionalProperties\":false,\"properties\":{\"error\":{\"type\":\"string\",\"enum\":[\"validation_failed\",\"not_found\",\"unauthorized\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}};",
+              "  const defs = {\"player\":{\"$id\":\"player\",\"type\":\"object\",\"required\":[\"id\",\"displayName\",\"level\",\"createdAt\"],\"additionalProperties\":false,\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1},\"displayName\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":32},\"level\":{\"type\":\"integer\",\"minimum\":1,\"maximum\":999},\"createdAt\":{\"type\":\"string\",\"format\":\"date-time\"}}},\"item\":{\"$id\":\"item\",\"type\":\"object\",\"required\":[\"id\",\"playerId\",\"slug\",\"quantity\"],\"additionalProperties\":false,\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1},\"playerId\":{\"type\":\"string\",\"minLength\":1},\"slug\":{\"type\":\"string\",\"pattern\":\"^[a-z0-9-]+$\"},\"quantity\":{\"type\":\"integer\",\"minimum\":0}}},\"error\":{\"$id\":\"error\",\"type\":\"object\",\"required\":[\"error\",\"message\"],\"additionalProperties\":false,\"properties\":{\"error\":{\"type\":\"string\",\"enum\":[\"validation_failed\",\"not_found\",\"unauthorized\"]},\"message\":{\"type\":\"string\",\"minLength\":1},\"details\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}}};",
+              "  pm.response.to.have.jsonSchema(resolve(schema, defs));",
+              "});",
+              "function resolve(node, defs) {",
+              "  if (Array.isArray(node)) return node.map(function (n) { return resolve(n, defs); });",
+              "  if (node && typeof node === \"object\") {",
+              "    if (typeof node.$ref === \"string\" && defs[node.$ref]) return resolve(defs[node.$ref], defs);",
+              "    const out = {};",
+              "    Object.keys(node).forEach(function (k) { if (k !== \"$id\") out[k] = resolve(node[k], defs); });",
+              "    return out;",
+              "  }",
+              "  return node;",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/admin/reset",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "admin",
+            "reset"
+          ]
+        }
+      }
+    }
+  ]
+}

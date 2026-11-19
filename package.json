@@ -1,0 +1,23 @@
+{
+  "name": "api-qa",
+  "version": "1.0.0",
+  "description": "API and contract testing for a small game-services API: Jest over real HTTP, JSON Schema contracts shared with a generated Postman collection, and a deliberately drifted build as the failing fixture.",
+  "license": "MIT",
+  "private": false,
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node service/server.js",
+    "test": "jest --runInBand",
+    "test:drifted": "DRIFT=all jest --runInBand",
+    "postman:generate": "node postman/generate.js",
+    "postman:check": "node postman/generate.js --check",
+    "newman": "node postman/run-newman.js"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "jest": "^29.7.0",
+    "newman": "^6.2.1"
+  },
+  "keywords": ["qa", "api-testing", "contract-testing", "jest", "json-schema", "postman", "newman", "ci"]
+}
